@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  backend:
+    build: .
+    command: ./target/x86_64-unknown-linux-musl/debug/rusty_auth
+    volumes:
+      - .:/code
+    ports:
+      - "3081:3081"
+    depends_on:
+      - postgres-local
+    env_file:
+      - config.conf
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres-local:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5431:5432"
+    env_file:
+      - config.conf
+
+volumes: 
+  postgres_data:

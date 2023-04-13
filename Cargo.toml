@@ -1,0 +1,21 @@
+[package]
+name = "rusty_auth"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.6.15"
+
+# A fast and correct HTTP library.
+hyper = { version = "0.14.17", features = ["full"] }
+
+# Event-driven, non-blocking I/O platform.
+tokio = { version = "1.17.0", features = ["full", "macros", "rt-multi-thread"] }
+
+tracing = "0.1"
+
+tracing-subscriber = "0.3"
+
+serde = { version = "1.0.160", features = ["derive"] }

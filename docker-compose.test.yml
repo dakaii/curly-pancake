@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  test:
+    build: .
+    command: cargo test
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres-test
+    env_file:
+      - config.conf
+
+  postgres-test:
+    image: postgres:latest
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data/
+    ports:
+      - "5434:5432"
+    env_file:
+      - config.conf
+
+
+volumes: 
+  postgres_test_data:
