@@ -1,18 +1,17 @@
-version: "3.8"
+version: "3.9"
 services:
   backend:
-    build: .
-    command: ./target/x86_64-unknown-linux-musl/debug/rusty_auth
+    image: rust
+    working_dir: /code
+    command: cargo run
     volumes:
       - .:/code
     ports:
-      - "3081:3081"
+      - "5173:3000"
     depends_on:
       - postgres-local
     env_file:
       - config.conf
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   postgres-local:
     image: postgres:latest

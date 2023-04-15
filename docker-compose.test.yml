@@ -1,8 +1,9 @@
-version: "3.7"
+version: "3.9"
 services:
   test:
-    build: .
+    image: rust
     command: cargo test
+    working_dir: /code
     volumes:
       - .:/code
     depends_on:
