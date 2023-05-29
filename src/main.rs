@@ -1,37 +1,15 @@
 mod controllers;
 use axum::{
-    extract::FromRef,
     routing::{get, post},
     Router,
 };
-use controllers::users::create_user;
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use controllers::{entities::state::AppState, users::create_user};
 use std::{
     env,
     net::SocketAddr,
     sync::{Arc, RwLock},
 };
-
-async fn init_database(pg_url: &str) -> Result<Pool<Postgres>, sqlx::Error> {
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(pg_url)
-        .await?;
-
-    Ok(pool)
-}
-
-#[derive(Clone)]
-pub struct AppState {
-    pool: Pool<Postgres>,
-    // client: HTTPClient,
-}
-
-impl FromRef<AppState> for Pool<Postgres> {
-    fn from_ref(app_state: &AppState) -> Pool<Postgres> {
-        app_state.pool.clone()
-    }
-}
+use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
@@ -57,14 +35,15 @@ async fn main() {
         pg_user, pg_password, pg_host, pg_port
     );
 
-    let pool = init_database(&pg_url).await.unwrap();
-
-    let app_state = AppState { pool };
+    let app_state = AppState::init_database(&pg_url).await.unwrap();
     let shared_state = Arc::new(RwLock::new(app_state));
+    let cors = CorsLayer::new().allow_origin(Any);
+
     let app = Router::new()
         .route("/", get(root))
         .route("/users", post(create_user))
-        .with_state(shared_state);
+        .with_state(shared_state)
+        .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     // tracing::debug!("listening on {}", addr);
