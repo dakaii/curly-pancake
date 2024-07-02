@@ -2,8 +2,8 @@ version: "3.9"
 services:
   backend:
     image: rust
-    working_dir: /code
     command: cargo run
+    working_dir: /code
     volumes:
       - .:/code
     ports:
@@ -18,7 +18,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5431:5432"
+      - "5454:5432"
     env_file:
       - config.conf
 
